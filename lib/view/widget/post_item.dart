@@ -392,63 +392,83 @@ class _VideoItemState extends ConsumerState<_VideoItem> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Material(
-          color: Colors.black,
-          child: AspectRatio(
-            aspectRatio: 414 / 247,
-            child: _isYoutubeUrl(widget.url)
-                ? YoutubePlayer(
-                    controller: _youtubeController,
-                    aspectRatio: 1,
-                    showVideoProgressIndicator: true,
-                    progressColors: const ProgressBarColors(
-                      playedColor: Colors.red,
-                      handleColor: Colors.redAccent,
-                    ),
-                  )
-                : _controller.value.isInitialized
-                    ? VisibilityDetector(
-                        key: UniqueKey(),
-                        onVisibilityChanged: (visibilityInfo) {
-                          var visiblePercentage =
-                              visibilityInfo.visibleFraction;
-                          if (visiblePercentage == 1) {
-                            _controller.play();
-                            setState(() {});
-                          } else {
-                            _controller.pause();
-                            setState(() {});
-                          }
-                        },
-                        child: Container(
-                          color: Colors.black,
-                          child: FittedBox(
-                            fit: BoxFit.contain,
-                            child: SizedBox(
-                              width: _controller.value.size.width,
-                              height: _controller.value.size.height,
-                              child: Stack(
-                                children: [
-                                  VideoPlayer(_controller),
-                                  // if (!_controller.value.isPlaying)
-                                  //   Positioned.fill(
-                                  //     child: Container(
-                                  //       color: Colors.black.withOpacity(.5),
-                                  //       alignment: Alignment.center,
-                                  //       child: const Icon(
-                                  //         Icons.play_arrow_rounded,
-                                  //         size: 80,
-                                  //         color: Colors.white,
-                                  //       ),
-                                  //     ),
-                                  //   ),
-                                ],
+        VisibilityDetector(
+          key: Key(widget.url),
+          onVisibilityChanged: (visibilityInfo) {
+            if (visibilityInfo.visibleFraction > 0.5) {
+              // Bắt đầu phát video nếu hiển thị > 50% trên màn hình
+              if (_isYoutubeUrl(widget.url)) {
+                _youtubeController.play();
+              } else {
+                _controller.play();
+              }
+            } else {
+              // Tạm dừng hoặc giải phóng tài nguyên video
+              if (_isYoutubeUrl(widget.url)) {
+                _youtubeController.pause();
+              } else {
+                _controller.pause();
+              }
+            }
+          },
+          child: Material(
+            color: Colors.black,
+            child: AspectRatio(
+              aspectRatio: 414 / 247,
+              child: _isYoutubeUrl(widget.url)
+                  ? YoutubePlayer(
+                      controller: _youtubeController,
+                      aspectRatio: 1,
+                      showVideoProgressIndicator: true,
+                      progressColors: const ProgressBarColors(
+                        playedColor: Colors.red,
+                        handleColor: Colors.redAccent,
+                      ),
+                    )
+                  : _controller.value.isInitialized
+                      ? VisibilityDetector(
+                          key: UniqueKey(),
+                          onVisibilityChanged: (visibilityInfo) {
+                            var visiblePercentage =
+                                visibilityInfo.visibleFraction;
+                            if (visiblePercentage == 1) {
+                              _controller.play();
+                              setState(() {});
+                            } else {
+                              _controller.pause();
+                              setState(() {});
+                            }
+                          },
+                          child: Container(
+                            color: Colors.black,
+                            child: FittedBox(
+                              fit: BoxFit.contain,
+                              child: SizedBox(
+                                width: _controller.value.size.width,
+                                height: _controller.value.size.height,
+                                child: Stack(
+                                  children: [
+                                    VideoPlayer(_controller),
+                                    // if (!_controller.value.isPlaying)
+                                    //   Positioned.fill(
+                                    //     child: Container(
+                                    //       color: Colors.black.withOpacity(.5),
+                                    //       alignment: Alignment.center,
+                                    //       child: const Icon(
+                                    //         Icons.play_arrow_rounded,
+                                    //         size: 80,
+                                    //         color: Colors.white,
+                                    //       ),
+                                    //     ),
+                                    //   ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      )
-                    : const Center(child: CircularProgressIndicator()),
+                        )
+                      : const Center(child: CircularProgressIndicator()),
+            ),
           ),
         ),
         _PostCountAction(
@@ -554,19 +574,9 @@ class _ImageSliderState extends ConsumerState<_ImageSlider> {
             ],
           ),
         ),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            border: Border(
-              bottom: BorderSide(color: Colors.white10),
-            ),
-          ),
-          child: _PostCountAction(
-            post: widget.post,
-            child: indicatorSliderWidget,
-          ),
+        _PostCountAction(
+          post: widget.post,
+          child: indicatorSliderWidget,
         ),
       ],
     );
@@ -583,7 +593,7 @@ class _PostCountAction extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+      padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
       decoration: const BoxDecoration(
         color: Colors.white,
       ),
