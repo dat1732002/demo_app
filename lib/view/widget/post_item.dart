@@ -9,7 +9,7 @@ import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
-class PostItemWidget extends ConsumerStatefulWidget {
+class PostItemWidget extends StatelessWidget {
   final Content post;
   final bool isSubWidget;
 
@@ -20,11 +20,6 @@ class PostItemWidget extends ConsumerStatefulWidget {
   });
 
   @override
-  PostItemState createState() => PostItemState();
-}
-
-class PostItemState extends ConsumerState<PostItemWidget> {
-  @override
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
@@ -33,8 +28,8 @@ class PostItemState extends ConsumerState<PostItemWidget> {
         children: [
           Container(
             margin:
-                EdgeInsets.symmetric(horizontal: widget.isSubWidget ? 12 : 0),
-            decoration: widget.isSubWidget
+                EdgeInsets.symmetric(horizontal: isSubWidget ? 12 : 0),
+            decoration: isSubWidget
                 ? const BoxDecoration(
                     border: Border(
                       right: BorderSide(
@@ -57,37 +52,37 @@ class PostItemState extends ConsumerState<PostItemWidget> {
               children: [
                 const SizedBox(height: 12),
                 _PostHeader(
-                  post: widget.post,
-                  isSubWidget: widget.isSubWidget,
+                  post: post,
+                  isSubWidget: isSubWidget,
                 ),
                 _PostDescription(
-                  content: widget.post.content ?? '',
-                  placeName: widget.post.placeName ?? '',
+                  content: post.content ?? '',
+                  placeName: post.placeName ?? '',
                 ),
                 const SizedBox(height: 12),
               ],
             ),
           ),
           // child ?? _PostMedia(isVideoMedia: isVideo),
-          widget.post.postShare != null
+          post.postShare != null
               ? PostItemWidget(
-                  post: widget.post.postShare!,
+                  post: post.postShare!,
                   isSubWidget: true,
                 )
               : const SizedBox.shrink(),
-          if (!widget.isSubWidget)
+          if (!isSubWidget)
             _PostMedia(
-              post: widget.post,
-              isSubWidget: widget.isSubWidget,
+              post: post,
+              isSubWidget: isSubWidget,
             ),
-          if (!widget.isSubWidget) const _PostAction(),
+          if (!isSubWidget) const _PostAction(),
         ],
       ),
     );
   }
 }
 
-class _PostMedia extends ConsumerWidget {
+class _PostMedia extends StatelessWidget {
   final Content post;
   final bool isSubWidget;
 
@@ -98,7 +93,7 @@ class _PostMedia extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final postShare = post.postShare;
     final url = postShare?.url ?? post.url;
     final contentType = postShare?.contentType ?? post.contentType;
@@ -124,7 +119,7 @@ class _PostMedia extends ConsumerWidget {
   }
 }
 
-class _PostHeader extends ConsumerWidget {
+class _PostHeader extends StatelessWidget {
   final Content post;
   final bool isSubWidget;
 
@@ -135,7 +130,7 @@ class _PostHeader extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Row(

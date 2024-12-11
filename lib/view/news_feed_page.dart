@@ -15,7 +15,10 @@ class NewsFeedScreen extends ConsumerWidget {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const Text('NewsFeed'),
+        shape: const Border(bottom: BorderSide(color: Colors.black12)),
+        surfaceTintColor: Colors.white,
+        title: const Text('Bài đăng'),
+        centerTitle: true,
       ),
       body: postState.when(
         data: (posts) => RefreshIndicator(
@@ -27,6 +30,7 @@ class NewsFeedScreen extends ConsumerWidget {
               color: Colors.black12
             ),
             physics: const BouncingScrollPhysics(),
+            cacheExtent: 1000,
             itemCount: posts.length,
             itemBuilder: (context, index) {
               return PostItemWidget(post: posts[index]);
